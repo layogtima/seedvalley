@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en" class="light scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEEDBANK | Bengaluru</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ["Space Mono", "monospace"],
+            },
+            colors: {
+              primary: {
+                50: "#ebf5ee",
+                100: "#d0ebd9",
+                200: "#a5d6b7",
+                300: "#77bf94",
+                400: "#4ea975",
+                500: "#2e8a58",
+                600: "#236e47",
+                700: "#1d5638",
+                800: "#163a27",
+                900: "#0f2219",
+              },
+              light: {
+                bg: "#ffffff",
+                text: "#000000",
+                accent: "#333333",
+                muted: "#666666",
+                border: "#e5e5e5",
+              },
+              dark: {
+                bg: "#121212",
+                text: "#ffffff",
+                accent: "#e5e5e5",
+                muted: "#a0a0a0",
+                border: "#333333",
+              },
+            },
+            animation: {
+              marquee: "marquee 30s linear infinite",
+              "fade-in": "fadeIn 0.5s ease-out",
+              "fade-out": "fadeOut 0.3s ease-out",
+              "slide-up": "slideUp 0.5s ease-out",
+              "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              wiggle: "wiggle 1s ease-in-out infinite",
+              sprout: "sprout 2s ease-out forwards",
+              "bounce-slow": "bounce 3s infinite",
+            },
+            keyframes: {
+              marquee: {
+                "0%": { transform: "translateX(100%)" },
+                "100%": { transform: "translateX(-100%)" },
+              },
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              fadeOut: {
+                "0%": { opacity: "1" },
+                "100%": { opacity: "0" },
+              },
+              slideUp: {
+                "0%": { transform: "translateY(10px)", opacity: "0" },
+                "100%": { transform: "translateY(0)", opacity: "1" },
+              },
+              wiggle: {
+                "0%, 100%": { transform: "rotate(-3deg)" },
+                "50%": { transform: "rotate(3deg)" },
+              },
+              sprout: {
+                "0%": { transform: "scaleY(0)", transformOrigin: "bottom" },
+                "100%": { transform: "scaleY(1)", transformOrigin: "bottom" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Space Mono Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Modular JavaScript Files -->
+    <script src="seedData.js"></script>
+    <script src="imageUtils.js"></script>
+    <script src="i18n.js"></script>
+    <script src="onboarding.js"></script>
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <body
+    class="bg-white dark:bg-gray-900 text-black dark:text-white font-mono min-h-screen flex flex-col transition-colors duration-300"
+  >
+    <!-- Vue App Container -->
+    <div id="app">
+      <!-- Loading State -->
+      <div
+        v-if="loading"
+        class="fixed inset-0 bg-white dark:bg-gray-900 flex items-center justify-center z-50 transition-colors duration-300"
+      >
+        <div class="flex flex-col items-center">
+          <div
+            class="w-6 h-6 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin mb-4"
+          ></div>
+          <p class="text-xs uppercase tracking-widest">{{ loadingMessage }}</p>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav
+        class="fixed w-full px-4 py-3 flex justify-between items-center z-40 bg-white dark:bg-gray-900 border-b border-black dark:border-gray-700 transition-colors duration-300"
+      >
+        <a
+          href="#"
+          class="text-xl font-bold tracking-tighter flex items-center"
+        >
+          <span class="mr-1">SEEDBANK</span
+          ><span class="text-xs align-text-top"></span>
+          <span
+            class="ml-2 text-xs tracking-wider bg-black dark:bg-white text-white dark:text-black px-1"
+            >{{ t('nav.bengaluru') }}</span
+          >
+        </a>
+
+        <div class="flex items-center gap-3 md:gap-6">
+          <a href="#overview" class="text-sm hover:underline hidden"
+            >{{ t('nav.overview') }}</a
+          >
+          <a href="#seeds" class="text-sm hover:underline hidden md:block"
+            >{{ t('nav.seeds') }}</a
+          >
+          <a href="#calendar" class="text-sm hover:underline hidden md:block"
+            >{{ t('nav.calendar') }}</a
+          >
+          <a href="#about" class="text-sm hover:underline hidden md:block"
+            >{{ t('nav.about') }}</a
+          >
+
+          <!-- Season Indicator -->
+          <div
+            class="hidden md:flex items-center gap-2 bg-black/10 dark:bg-white/10 px-3 py-1 rounded-full"
+          >
+            <span class="text-sm" v-html="getSeasonIcon()"></span>
+            <span class="text-xs">{{ currentSeason }}</span>
+          </div>
+
+          <!-- Language Switcher (New) -->
+          <div class="relative group">
+            <button class="text-sm flex items-center gap-1 hover:underline">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                ></path>
+                <path d="M2 12h20"></path>
+              </svg>
+              <span class="hidden md:inline"
+                >{{ getLanguageName(currentLanguage) }}</span
+              >
+            </button>
+
+            <!-- Dropdown -->
+            <div
+              class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-black dark:border-gray-700 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 z-50"
+            >
+              <div class="py-1">
+                <template v-for="lang in getAvailableLanguages()">
+                  <button
+                    @click="changeLanguage(lang)"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
+                    :class="{'font-bold': lang === currentLanguage}"
+                  >
+                    {{ getLanguageName(lang) }}
+                  </button>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dark Mode Toggle -->
+          <label class="theme-switch">
+            <input type="checkbox" v-model="darkMode" />
+            <span class="slider"></span>
+          </label>
+
+          <button @click="toggleMobileMenu" class="md:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="w-5 h-5"
+            >
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <line x1="4" y1="18" x2="20" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div
+        v-if="showMobileMenu"
+        class="fixed top-16 left-0 right-0 bg-white dark:bg-gray-900 border-b border-black dark:border-gray-700 z-30 md:hidden animate-fade-in transition-colors duration-300"
+      >
+        <div class="p-4 flex flex-col space-y-4">
+          <!-- Mobile Season Display -->
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl" v-html="getSeasonIcon()"></span>
+            <div>
+              <div>{{ currentSeason }}</div>
+              <div class="text-xs">{{ currentDate }}</div>
+            </div>
+          </div>
+
+          <a
+            href="#overview"
+            @click="showMobileMenu = false"
+            class="text-sm py-2 border-b border-gray-200 dark:border-gray-800"
+            >{{ t('nav.overview') }}</a
+          >
+          <a
+            href="#seeds"
+            @click="showMobileMenu = false"
+            class="text-sm py-2 border-b border-gray-200 dark:border-gray-800"
+            >{{ t('nav.seeds') }}</a
+          >
+          <a
+            href="#calendar"
+            @click="showMobileMenu = false"
+            class="text-sm py-2 border-b border-gray-200 dark:border-gray-800"
+            >{{ t('nav.calendar') }}</a
+          >
+          <a
+            href="#about"
+            @click="showMobileMenu = false"
+            class="text-sm py-2 border-b border-gray-200 dark:border-gray-800"
+            >{{ t('nav.about') }}</a
+          >
+
+          <!-- Language Options in Mobile Menu -->
+          <div class="pt-2 border-t border-gray-200 dark:border-gray-800">
+            <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              {{ t('common.language') }}
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="lang in getAvailableLanguages()"
+                @click="changeLanguage(lang)"
+                class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
+                :class="lang === currentLanguage ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
+              >
+                {{ getLanguageName(lang) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <header
+        id="overview"
+        class="h-screen flex flex-col justify-center items-center pt-16 relative overflow-hidden"
+      >
+        <div
+          class="absolute inset-0 flex items-center justify-center opacity-5"
+        >
+          <div class="w-full h-full">
+            <div
+              class="w-96 h-96 border-8 border-black dark:border-gray-700 rounded-full absolute -right-12 -top-12"
+            ></div>
+            <div
+              class="w-64 h-64 border-8 border-black dark:border-gray-700 rounded-full absolute left-20 bottom-20"
+            ></div>
+            <div
+              class="w-32 h-32 bg-black dark:bg-gray-700 absolute left-48 top-48"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Current Time & Season Banner (Large Screens) -->
+        <div
+          class="absolute top-24 left-0 right-0 flex justify-center pointer-events-none"
+        >
+          <div
+            class="py-2 px-4 bg-black/10 dark:bg-white/10 rounded-full text-center hidden md:block"
+          >
+            <span class="text-sm font-bold">{{ currentTime }}</span>
+            <span class="mx-2">|</span>
+            <span class="text-sm" v-html="getSeasonIcon()"></span>
+            <span class="text-sm">{{ currentSeason }}</span>
+          </div>
+        </div>
+
+        <div class="z-10 px-8 max-w-4xl text-center md:text-left">
+          <div class="flex flex-col md:flex-row items-center mb-8">
+            <div class="text-8xl mb-6 md:mb-0 md:mr-8">🌱</div>
+            <h1 class="text-6xl md:text-8xl font-bold leading-none">
+              {{ t('hero.title') }}
+            </h1>
+          </div>
+          <p class="text-lg md:text-xl max-w-lg mx-auto md:mx-0">
+            {{ t('hero.subtitle') }}<br /><br />
+            {{ t('hero.description') }}
+          </p>
+          <div
+            class="mt-8 flex flex-col sm:flex-row justify-center md:justify-start gap-4"
+          >
+            <a
+              href="#seeds"
+              class="bg-black dark:bg-white text-white dark:text-black px-8 py-3 text-sm uppercase tracking-widest inline-block hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center"
+            >
+              <span class="mr-2">{{ t('hero.findSeeds') }}</span>
+            </a>
+            <a
+              href="#calendar"
+              class="border-2 border-black dark:border-white px-8 py-3 text-sm uppercase tracking-widest inline-block hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+            >
+              <svg
+                class="mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>{{ t('hero.planting') }}</span>
+            </a>
+          </div>
+
+          <!-- Help Button -->
+          <button
+            @click="showOnboardingModal"
+            id="how-it-works-btn"
+            class="mt-4 text-xs flex items-center gap-1 mx-auto md:mx-0 hover:underline"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span class="uppercase">{{ t('hero.howItWorks') }}</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Marquee Text -->
+      <div
+        class="bg-black dark:bg-white text-white dark:text-black py-3 overflow-hidden whitespace-nowrap transition-colors duration-300"
+      >
+        <div class="animate-marquee inline-block">
+          <span class="text-xl mx-4"
+            >BENGALURU CLIMATE: DRY SEASON MARCH-MAY • MONSOON JUNE-SEPTEMBER •
+            MODERATE TEMPERATURES YEAR-ROUND • ELEVATION 920m • NOW IS PERFECT
+            FOR PLANTING QUICK GROWERS</span
+          >
+          <span class="text-xl mx-4">•</span>
+          <span class="text-xl mx-4"
+            >PERFECT TIME FOR MICROGREENS, SPINACH, METHI, CORIANDER, RADISH •
+            PREPARE FOR MONSOON WITH OKRA, CUCUMBER, BEANS</span
+          >
+          <span class="text-xl mx-4">•</span>
+          <span class="text-xl mx-4"
+            >LOCAL TIP: USE SHADE CLOTH DURING PEAK SUMMER DAYS • HARVEST
+            RAINWATER DURING MONSOON</span
+          >
+          <span class="text-xl mx-4">•</span>
+        </div>
+      </div>
+
+      <!-- Seeds Section with Filters Panel -->
+      <section id="seeds" class="py-24 px-8">
+        <div class="max-w-6xl mx-auto">
+          <div
+            class="flex flex-col md:flex-row justify-between items-start gap-8 mb-16"
+          >
+            <!-- Left: Title -->
+            <div>
+              <h2 class="text-5xl font-bold">
+                {{ activeCategory === 'all' ? t('seeds.allSeeds') :
+                getCategoryName(activeCategory).toUpperCase() }}
+                <span class="text-xs align-super"> {{ t('seeds.title') }}</span>
+              </h2>
+              <p class="text-sm mt-4 max-w-xl">
+                {{ t('seeds.subtitle') }}
+                <span class="font-bold"
+                  >{{ t('seeds.currentSeason') }}
+                  <span v-html="getSeasonIcon()"></span>
+                  {{ currentSeason }}</span
+                >
+              </p>
+              <p class="text-xs mt-2">
+                {{ currentDate }} • {{ t('seeds.dateFilter') }}
+              </p>
+            </div>
+
+            <!-- Right: Filter Panel -->
+            <div
+              class="bg-gray-100 dark:bg-gray-800 p-6 border border-black dark:border-gray-700 w-full md:w-auto transition-colors duration-300"
+            >
+              <div class="flex flex-col space-y-4">
+                <!-- Categories -->
+                <div>
+                  <h3 class="text-sm uppercase tracking-wider mb-2">
+                    {{ t('seeds.category') }}
+                  </h3>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      @click="setActiveCategory('all')"
+                      class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
+                      :class="activeCategory === 'all' ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
+                    >
+                      {{ t('seeds.allSeeds') }}
+                    </button>
+                    <button
+                      v-for="category in categories"
+                      :key="category.id"
+                      @click="setActiveCategory(category.id)"
+                      class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
+                      :class="activeCategory === category.id ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
+                    >
+                      {{ category.name.toUpperCase() }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Sorting -->
+                <div>
+                  <h3 class="text-sm uppercase tracking-wider mb-2">
+                    {{ t('seeds.sortBy') }}
+                  </h3>
+                  <select
+                    v-model="sortBy"
+                    class="bg-white dark:bg-gray-900 border border-black dark:border-gray-700 p-2 text-sm w-full transition-colors duration-300"
+                  >
+                    <option value="growTime">
+                      {{ t('seeds.sortOptions.growTime') }}
+                    </option>
+                    <option value="name">
+                      {{ t('seeds.sortOptions.name') }}
+                    </option>
+                    <option value="difficulty">
+                      {{ t('seeds.sortOptions.difficulty') }}
+                    </option>
+                    <option value="yield">
+                      {{ t('seeds.sortOptions.yield') }}
+                    </option>
+                    <option value="water">
+                      {{ t('seeds.sortOptions.water') }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Reset Button -->
+                <button
+                  @click="resetFilters"
+                  class="px-3 py-2 mt-2 text-xs border border-black dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-300"
+                >
+                  {{ t('seeds.reset') }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Legend (Icons Only) -->
+          <div class="mb-6 flex justify-center gap-8">
+            <div class="flex flex-col items-center">
+              <div
+                class="flex items-center justify-center w-10 h-10 border-2 border-black dark:border-white rounded-full mb-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m4.9 4.9 14.2 14.2"></path>
+                </svg>
+              </div>
+              <span class="text-xs">{{ t('seeds.legend.difficulty') }}</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div
+                class="flex items-center justify-center w-10 h-10 border-2 border-black dark:border-white rounded-full mb-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 2v2"></path>
+                  <path d="m4.93 4.93 1.41 1.41"></path>
+                  <path d="M2 12h2"></path>
+                  <path d="m19.07 4.93-1.41 1.41"></path>
+                  <path d="M20 12h2"></path>
+                  <path d="m15.66 15.66 1.41 1.41"></path>
+                  <path d="M12 20v2"></path>
+                  <path d="m8.34 15.66-1.41 1.41"></path>
+                  <circle cx="12" cy="12" r="4"></circle>
+                </svg>
+              </div>
+              <span class="text-xs">{{ t('seeds.legend.sunlight') }}</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div
+                class="flex items-center justify-center w-10 h-10 border-2 border-black dark:border-white rounded-full mb-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 22c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                  ></path>
+                  <path
+                    d="M12 12c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                  ></path>
+                </svg>
+              </div>
+              <span class="text-xs">{{ t('seeds.legend.water') }}</span>
+            </div>
+          </div>
+
+          <!-- Legend Help Toggle -->
+          <div class="mb-12 text-center">
+            <button
+              @click="showLegend = !showLegend"
+              class="text-xs inline-flex items-center gap-1 hover:underline"
+            >
+              <span v-if="!showLegend">{{ t('seeds.legend.show') }}</span>
+              <span v-else>{{ t('seeds.legend.hide') }}</span>
+              <svg
+                v-if="!showLegend"
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+            </button>
+
+            <!-- Detailed Legend (Hidden by Default) -->
+            <div
+              v-if="showLegend"
+              class="mt-4 bg-gray-100 dark:bg-gray-800 p-4 border border-black dark:border-gray-700 transition-colors duration-300 animate-fade-in"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span
+                      class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m4.9 4.9 14.2 14.2"></path>
+                      </svg>
+                    </span>
+                    <span class="text-xs font-bold"
+                      >{{ t('seeds.legend.difficulty') }}</span
+                    >
+                  </div>
+                  <p class="text-xs text-left">
+                    {{ t('seeds.legend.difficultyDesc') }}
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span
+                      class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M12 2v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m15.66 15.66 1.41 1.41"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m8.34 15.66-1.41 1.41"></path>
+                        <circle cx="12" cy="12" r="4"></circle>
+                      </svg>
+                    </span>
+                    <span class="text-xs font-bold"
+                      >{{ t('seeds.legend.sunlight') }}</span
+                    >
+                  </div>
+                  <p class="text-xs text-left">
+                    {{ t('seeds.legend.sunlightDesc') }}
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span
+                      class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M12 22c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                        ></path>
+                        <path
+                          d="M12 12c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                        ></path>
+                      </svg>
+                    </span>
+                    <span class="text-xs font-bold"
+                      >{{ t('seeds.legend.water') }}</span
+                    >
+                  </div>
+                  <p class="text-xs text-left">
+                    {{ t('seeds.legend.waterDesc') }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seeds Grid -->
+          <div
+            v-if="filteredSeeds.length > 0"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <div
+              v-for="seed in sortedSeeds"
+              :key="seed.id"
+              class="border-2 border-black dark:border-gray-700 group cursor-pointer seed-card hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors duration-300 flex flex-col animate-slide-up"
+              @click="openSeedDetail(seed)"
+            >
+              <!-- Card Image -->
+              <div class="relative h-60 overflow-hidden">
+                <div
+                  class="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center"
+                >
+                  <img
+                    :src="getSeedImage(seed)"
+                    :alt="seed.name"
+                    class="object-cover w-full h-full"
+                  />
+                  <!-- Overlay with Season Icons -->
+                  <div class="absolute top-0 right-0 p-2 flex gap-1">
+                    <span
+                      v-for="season in seed.seasons"
+                      :key="season"
+                      class="w-6 h-6 flex items-center justify-center bg-black/70 dark:bg-white/70 text-white dark:text-black rounded-full text-xs"
+                      :title="getSeasonName(season)"
+                      v-html="getSeasonIconSmall(season)"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Main Content -->
+              <div class="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold group-hover:underline">
+                      {{ seed.name.toUpperCase() }}
+                    </h3>
+                    <div class="seed-sprout">
+                      <div
+                        class="seed bg-black dark:bg-white group-hover:bg-white dark:group-hover:bg-black"
+                      ></div>
+                      <div
+                        class="sprout bg-black dark:bg-white group-hover:bg-white dark:group-hover:bg-black"
+                      ></div>
+                      <div
+                        class="leaf-left bg-black dark:bg-white group-hover:bg-white dark:group-hover:bg-black"
+                      ></div>
+                      <div
+                        class="leaf-right bg-black dark:bg-white group-hover:bg-white dark:group-hover:bg-black"
+                      ></div>
+                    </div>
+                  </div>
+                  <p class="text-xs mt-1 mb-2">{{ seed.localName }}</p>
+                </div>
+                <div>
+                  <!-- Description is now more compact -->
+                  <p class="text-xs line-clamp-2">{{ seed.description }}</p>
+                  <div class="mt-3 flex justify-between items-end">
+                    <div class="text-xs flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="mr-1"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{{ seed.growTime }}</span>
+                    </div>
+                    <div
+                      class="text-xs uppercase tracking-widest group-hover:underline"
+                    >
+                      {{ t('seeds.details') }} →
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Footer -->
+              <div
+                class="bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-900 dark:group-hover:bg-gray-200 p-2 border-t border-black dark:border-gray-700 flex justify-between items-center text-xs transition-colors duration-300"
+              >
+                <div class="flex items-center">
+                  <span v-html="getSeasonIconSmall(seed.seasons[0])"></span>
+                  <span class="ml-1">{{ getShortSeason(seed) }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <div
+                    class="w-6 h-6 flex items-center justify-center rounded-full border border-black dark:border-white"
+                    :title="t('seeds.legend.difficulty')"
+                  >
+                    {{ seed.difficulty }}
+                  </div>
+                  <div
+                    class="w-6 h-6 flex items-center justify-center rounded-full border border-black dark:border-white"
+                    :title="t('seeds.legend.sunlight')"
+                  >
+                    {{ seed.sunlight }}
+                  </div>
+                  <div
+                    class="w-6 h-6 flex items-center justify-center rounded-full border border-black dark:border-white"
+                    :title="t('seeds.legend.water')"
+                  >
+                    {{ seed.water }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- No Results -->
+          <div
+            v-else
+            class="text-center py-24 border-2 border-black dark:border-gray-700 transition-colors duration-300"
+          >
+            <p class="text-2xl font-bold mb-4">{{ t('seeds.noResults') }}</p>
+            <button
+              @click="resetFilters"
+              class="border-2 border-black dark:border-white px-6 py-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors duration-300"
+            >
+              {{ t('seeds.reset') }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Calendar Section -->
+      <section
+        id="calendar"
+        class="py-24 px-8 bg-gray-100 dark:bg-gray-800 hidden transition-colors hiddenduration-300"
+      >
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-5xl font-bold mb-6">{{ t('calendar.title') }}</h2>
+          <p class="text-lg mb-12">
+            {{ t('calendar.subtitle') }}
+            <span class="font-bold"
+              >{{ t('calendar.currentMonth') }} {{ getCurrentMonth() }}</span
+            >
+          </p>
+
+          <div class="overflow-x-auto">
+            <table
+              class="w-full border-collapse border-2 border-black dark:border-gray-700 transition-colors duration-300"
+            >
+              <thead>
+                <tr>
+                  <th
+                    class="p-4 border border-black dark:border-gray-700 bg-white dark:bg-gray-900 transition-colors duration-300"
+                  >
+                    {{ t('calendar.headers.season') }}
+                  </th>
+                  <th
+                    class="p-4 border border-black dark:border-gray-700 bg-white dark:bg-gray-900 transition-colors duration-300"
+                  >
+                    {{ t('calendar.headers.months') }}
+                  </th>
+                  <th
+                    class="p-4 border border-black dark:border-gray-700 bg-white dark:bg-gray-900 transition-colors duration-300"
+                  >
+                    {{ t('calendar.headers.bestToPlant') }}
+                  </th>
+                  <th
+                    class="p-4 border border-black dark:border-gray-700 bg-white dark:bg-gray-900 transition-colors duration-300"
+                  >
+                    {{ t('calendar.headers.notes') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="bg-white dark:bg-gray-900 transition-colors duration-300"
+                  :class="{'bg-black/5 dark:bg-white/5': isCurrentSeason('summer')}"
+                >
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 font-bold"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span v-html="getSeasonIcon('summer')"></span>
+                      <span>{{ t('calendar.seasons.summer') }}</span>
+                    </div>
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <span class="font-bold"
+                      >{{ t('calendar.monthRanges.summer') }}</span
+                    >
+                    <span
+                      v-if="isCurrentSeason('summer')"
+                      class="ml-2 inline-block px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black text-xs"
+                      >{{ t('calendar.current') }}</span
+                    >
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <ul class="list-disc pl-5 space-y-1 text-sm">
+                      <li>Microgreens</li>
+                      <li>Spinach/Palak</li>
+                      <li>Methi</li>
+                      <li>Radish</li>
+                      <li>Coriander</li>
+                    </ul>
+                  </td>
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 text-sm"
+                  >
+                    {{ t('calendar.notes.summer') }}
+                  </td>
+                </tr>
+                <tr
+                  class="bg-white dark:bg-gray-900 transition-colors duration-300"
+                  :class="{'bg-black/5 dark:bg-white/5': isCurrentSeason('monsoon')}"
+                >
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 font-bold"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span v-html="getSeasonIcon('monsoon')"></span>
+                      <span>{{ t('calendar.seasons.monsoon') }}</span>
+                    </div>
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <span class="font-bold"
+                      >{{ t('calendar.monthRanges.monsoon') }}</span
+                    >
+                    <span
+                      v-if="isCurrentSeason('monsoon')"
+                      class="ml-2 inline-block px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black text-xs"
+                      >{{ t('calendar.current') }}</span
+                    >
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <ul class="list-disc pl-5 space-y-1 text-sm">
+                      <li>Okra/Bhindi</li>
+                      <li>Beans</li>
+                      <li>Cucumber</li>
+                      <li>Chilis</li>
+                      <li>Gourds (bitter, bottle)</li>
+                    </ul>
+                  </td>
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 text-sm"
+                  >
+                    {{ t('calendar.notes.monsoon') }}
+                  </td>
+                </tr>
+                <tr
+                  class="bg-white dark:bg-gray-900 transition-colors duration-300"
+                  :class="{'bg-black/5 dark:bg-white/5': isCurrentSeason('postmonsoon')}"
+                >
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 font-bold"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span v-html="getSeasonIcon('postmonsoon')"></span>
+                      <span>{{ t('calendar.seasons.postmonsoon') }}</span>
+                    </div>
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <span class="font-bold"
+                      >{{ t('calendar.monthRanges.postmonsoon') }}</span
+                    >
+                    <span
+                      v-if="isCurrentSeason('postmonsoon')"
+                      class="ml-2 inline-block px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black text-xs"
+                      >{{ t('calendar.current') }}</span
+                    >
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <ul class="list-disc pl-5 space-y-1 text-sm">
+                      <li>Tomatoes</li>
+                      <li>Eggplant/Brinjal</li>
+                      <li>Carrots</li>
+                      <li>Cabbage</li>
+                      <li>Cauliflower</li>
+                    </ul>
+                  </td>
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 text-sm"
+                  >
+                    {{ t('calendar.notes.postmonsoon') }}
+                  </td>
+                </tr>
+                <tr
+                  class="bg-white dark:bg-gray-900 transition-colors duration-300"
+                  :class="{'bg-black/5 dark:bg-white/5': isCurrentSeason('winter')}"
+                >
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 font-bold"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span v-html="getSeasonIcon('winter')"></span>
+                      <span>{{ t('calendar.seasons.winter') }}</span>
+                    </div>
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <span class="font-bold"
+                      >{{ t('calendar.monthRanges.winter') }}</span
+                    >
+                    <span
+                      v-if="isCurrentSeason('winter')"
+                      class="ml-2 inline-block px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black text-xs"
+                      >{{ t('calendar.current') }}</span
+                    >
+                  </td>
+                  <td class="p-4 border border-black dark:border-gray-700">
+                    <ul class="list-disc pl-5 space-y-1 text-sm">
+                      <li>Peas</li>
+                      <li>Lettuce</li>
+                      <li>Spinach</li>
+                      <li>Coriander</li>
+                      <li>Fenugreek/Methi</li>
+                    </ul>
+                  </td>
+                  <td
+                    class="p-4 border border-black dark:border-gray-700 text-sm"
+                  >
+                    {{ t('calendar.notes.winter') }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            class="mt-12 bg-white dark:bg-gray-900 border-2 border-black dark:border-gray-700 p-6 transition-colors duration-300"
+          >
+            <h3 class="text-xl font-bold mb-4">
+              {{ t('calendar.recommendations.title') }}
+            </h3>
+            <p class="mb-6">
+              {{ t('calendar.recommendations.based') }} ({{ currentDate }}), {{
+              t('calendar.recommendations.bestOptions') }}
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                class="border border-black dark:border-gray-700 p-4 flex flex-col items-center transition-colors duration-300"
+              >
+                <div class="text-4xl mb-2">🌱</div>
+                <h4 class="font-bold text-center">
+                  {{ t('calendar.sections.plantNow') }}
+                </h4>
+                <ul class="list-disc pl-5 text-sm mt-2">
+                  <li>Microgreens (7-14 days)</li>
+                  <li>Methi/Fenugreek (20-30 days)</li>
+                  <li>Radish (25-30 days)</li>
+                  <li>Spinach/Palak (30-40 days)</li>
+                  <li>Coriander (3-4 weeks)</li>
+                </ul>
+              </div>
+
+              <div
+                class="border border-black dark:border-gray-700 p-4 flex flex-col items-center transition-colors duration-300"
+              >
+                <div class="text-4xl mb-2">🌧️</div>
+                <h4 class="font-bold text-center">
+                  {{ t('calendar.sections.prepareForMonsoon') }}
+                </h4>
+                <ul class="list-disc pl-5 text-sm mt-2">
+                  <li>Start chilis indoors now</li>
+                  <li>Prepare seed trays for okra</li>
+                  <li>Plan cucumber trellis system</li>
+                  <li>Organize raised beds for beans</li>
+                  <li>Stock up on organic fertilizer</li>
+                </ul>
+              </div>
+
+              <div
+                class="border border-black dark:border-gray-700 p-4 flex flex-col items-center transition-colors duration-300"
+              >
+                <div class="text-4xl mb-2">🔄</div>
+                <h4 class="font-bold text-center">
+                  {{ t('calendar.sections.continuousCrops') }}
+                </h4>
+                <ul class="list-disc pl-5 text-sm mt-2">
+                  <li>Microgreens (weekly sowing)</li>
+                  <li>Coriander (biweekly sowing)</li>
+                  <li>Spinach (succession planting)</li>
+                  <li>Methi (monthly sowing)</li>
+                  <li>Mixed greens (ongoing)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="py-24 px-8 transition-colors duration-300  bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-4xl mx-auto">
+          <h2 class="text-5xl font-bold mb-12">{{ t('about.title') }}</h2>
+
+          <div class="space-y-8">
+            <p class="text-lg">{{ t('about.description') }}</p>
+
+            <div
+              class="border-l-4 border-black dark:border-gray-200 pl-6 py-2 transition-colors duration-300"
+            >
+              <p class="text-xl italic">{{ t('about.quote') }}</p>
+              <p class="mt-2">{{ t('about.quoteAuthor') }}</p>
+            </div>
+
+            <p>{{ t('about.climate') }}</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+              <div
+                class="border-2 border-black dark:border-gray-700 p-6 transition-colors duration-300"
+              >
+                <h3 class="text-xl font-bold mb-4">
+                  {{ t('about.resources') }}
+                </h3>
+                <ul class="space-y-3 text-sm">
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">🌱</span>
+                    <span
+                      ><strong>Lalbagh Botanical Garden</strong> - Monthly seed
+                      exchanges every first Sunday</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">🌱</span>
+                    <span
+                      ><strong>Garden City Farmers</strong> - Workshops and
+                      organic seed sources</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">🌱</span>
+                    <span
+                      ><strong>Oota From Your Thota</strong> - Bengaluru urban
+                      farming community</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">🌱</span>
+                    <span
+                      ><strong>University of Agricultural Sciences</strong> -
+                      Extension services for home gardeners</span
+                    >
+                  </li>
+                </ul>
+              </div>
+
+              <div
+                class="border-2 border-black dark:border-gray-700 p-6 transition-colors duration-300"
+              >
+                <h3 class="text-xl font-bold mb-4">{{ t('about.tips') }}</h3>
+                <ul class="space-y-3 text-sm">
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">💧</span>
+                    <span
+                      >Harvest rainwater during monsoon months for year-round
+                      use</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">☀️</span>
+                    <span
+                      >Use 30% shade cloth during peak summer (March-May)</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">🍂</span>
+                    <span>Mulch heavily to retain moisture in dry periods</span>
+                  </li>
+                  <li class="flex items-start">
+                    <span class="inline-block w-5 h-5 mr-2 mt-0.5">🐛</span>
+                    <span
+                      >Companion plant with marigold to deter common pests</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-8 text-sm">
+              <p>
+                {{ t('about.created') }}
+                <a href="#" class="underline">{{ t('about.company') }}</a> {{
+                t('about.for') }}
+              </p>
+              <p>{{ t('about.dataSource') }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seed Detail Modal with Collapsible Sections -->
+      <div
+        v-if="selectedSeed"
+        class="fixed inset-0 bg-black/90 dark:bg-gray-900/95 flex items-center justify-center z-50 overflow-auto transition-colors duration-300"
+      >
+        <div
+          class="bg-white dark:bg-gray-800 max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4 animate-fade-in transition-colors duration-300"
+        >
+          <!-- Close Button -->
+          <div
+            class="sticky top-0 flex justify-end bg-white dark:bg-gray-800 z-10 transition-colors duration-300"
+          >
+            <button @click="closeSeedDetail" class="p-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Seed Content -->
+          <div class="px-8 pt-0 pb-8">
+            <!-- Header with Image -->
+            <div class="flex flex-col md:flex-row gap-6 mb-6">
+              <!-- Seed Image -->
+              <div
+                class="w-full md:w-1/3 aspect-square bg-gray-200 dark:bg-gray-700 relative overflow-hidden"
+              >
+                <img
+                  :src="getSeedImage(selectedSeed, 'large')"
+                  :alt="selectedSeed.name"
+                  class="w-full h-full object-cover"
+                />
+                <!-- Seasonal Badges -->
+                <div
+                  class="absolute bottom-0 left-0 right-0 p-2 flex justify-center gap-2 bg-black/60 dark:bg-white/60"
+                >
+                  <span
+                    v-for="season in selectedSeed.seasons"
+                    :key="season"
+                    class="w-8 h-8 flex items-center justify-center bg-white dark:bg-black text-black dark:text-white rounded-full"
+                    :title="getSeasonName(season)"
+                    v-html="getSeasonIconSmall(season)"
+                  ></span>
+                </div>
+              </div>
+
+              <!-- Seed Title and Basic Info -->
+              <div class="w-full md:w-2/3">
+                <h2 class="text-3xl md:text-4xl font-bold">
+                  {{ selectedSeed.name.toUpperCase() }}
+                </h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {{ selectedSeed.localName }} • {{ selectedSeed.scientificName
+                  }}
+                </p>
+
+                <!-- Quick Stats in a Row -->
+                <div class="flex gap-4 mb-4">
+                  <div class="flex items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span class="text-sm font-bold"
+                      >{{ selectedSeed.growTime }}</span
+                    >
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="m4.9 4.9 14.2 14.2"></path>
+                    </svg>
+                    <span class="text-sm font-bold"
+                      >{{ t('seeds.legend.difficulty') }}: {{
+                      selectedSeed.difficulty }}/5</span
+                    >
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 2v2"></path>
+                      <path d="m4.93 4.93 1.41 1.41"></path>
+                      <path d="M2 12h2"></path>
+                      <path d="m19.07 4.93-1.41 1.41"></path>
+                      <path d="M20 12h2"></path>
+                      <path d="m15.66 15.66 1.41 1.41"></path>
+                      <path d="M12 20v2"></path>
+                      <path d="m8.34 15.66-1.41 1.41"></path>
+                      <circle cx="12" cy="12" r="4"></circle>
+                    </svg>
+                    <span class="text-sm font-bold"
+                      >{{ t('seeds.legend.sunlight') }}: {{
+                      selectedSeed.sunlight }}/5</span
+                    >
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M12 22c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                      ></path>
+                      <path
+                        d="M12 12c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                      ></path>
+                    </svg>
+                    <span class="text-sm font-bold"
+                      >{{ t('seeds.legend.water') }}: {{ selectedSeed.water
+                      }}/5</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <p class="mt-4">{{ selectedSeed.description }}</p>
+              </div>
+            </div>
+
+            <!-- Collapsible Sections -->
+            <div class="space-y-4">
+              <!-- Planting Guide Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('planting')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M16 22h2a2 2 0 0 0 2-2v-2a8 8 0 0 0-16 0v2a2 2 0 0 0 2 2h2"
+                      ></path>
+                      <path
+                        d="M18 10a4 4 0 0 0-4-4h-4a4 4 0 0 0-4 4v2h12z"
+                      ></path>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.planting') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.planting}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.planting"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <ol class="list-decimal pl-5 space-y-2 text-sm">
+                    <li
+                      v-for="(step, index) in selectedSeed.plantingSteps"
+                      :key="index"
+                    >
+                      {{ step }}
+                    </li>
+                  </ol>
+                </div>
+              </div>
+
+              <!-- Care Instructions Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('care')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 19V5M5 12l7-7 7 7"></path>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.care') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.care}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.care"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <ul class="space-y-3 text-sm">
+                    <li class="flex items-start">
+                      <span
+                        class="inline-block w-6 h-6 border border-black dark:border-white rounded-full flex-shrink-0 flex items-center justify-center mr-2 transition-colors duration-300"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M12 2v2"></path>
+                          <path d="m4.93 4.93 1.41 1.41"></path>
+                          <path d="M2 12h2"></path>
+                          <path d="m19.07 4.93-1.41 1.41"></path>
+                          <path d="M20 12h2"></path>
+                          <path d="m15.66 15.66 1.41 1.41"></path>
+                          <path d="M12 20v2"></path>
+                          <path d="m8.34 15.66-1.41 1.41"></path>
+                          <circle cx="12" cy="12" r="4"></circle>
+                        </svg>
+                      </span>
+                      <div>
+                        <strong>{{ t('seedDetail.careLabels.light') }}</strong>
+                        {{ selectedSeed.careInstructions.light }}
+                      </div>
+                    </li>
+                    <li class="flex items-start">
+                      <span
+                        class="inline-block w-6 h-6 border border-black dark:border-white rounded-full flex-shrink-0 flex items-center justify-center mr-2 transition-colors duration-300"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path
+                            d="M12 22c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                          ></path>
+                          <path
+                            d="M12 12c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                          ></path>
+                        </svg>
+                      </span>
+                      <div>
+                        <strong>{{ t('seedDetail.careLabels.water') }}</strong>
+                        {{ selectedSeed.careInstructions.water }}
+                      </div>
+                    </li>
+                    <li class="flex items-start">
+                      <span
+                        class="inline-block w-6 h-6 border border-black dark:border-white rounded-full flex-shrink-0 flex items-center justify-center mr-2 transition-colors duration-300"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M21 10H3M16 2H8M9 22h6"></path>
+                        </svg>
+                      </span>
+                      <div>
+                        <strong>{{ t('seedDetail.careLabels.soil') }}</strong>
+                        {{ selectedSeed.careInstructions.soil }}
+                      </div>
+                    </li>
+                    <li class="flex items-start">
+                      <span
+                        class="inline-block w-6 h-6 border border-black dark:border-white rounded-full flex-shrink-0 flex items-center justify-center mr-2 transition-colors duration-300"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path
+                            d="M4.9 4.9C2 7.8 2 12.5 4.9 15.4c2.9 2.9 7.6 2.9 10.5 0"
+                          ></path>
+                          <path d="M9 14c-2-2-2-5.3 0-7.3"></path>
+                          <path d="M17 5c2.1 2.3 2.1 6 0 8.3"></path>
+                          <path d="M13.1 16.5c1.6 2.3 1.4 6-.2 8.5"></path>
+                        </svg>
+                      </span>
+                      <div>
+                        <strong
+                          >{{ t('seedDetail.careLabels.spacing') }}</strong
+                        >
+                        {{ selectedSeed.careInstructions.spacing }}
+                      </div>
+                    </li>
+                    <li class="flex items-start">
+                      <span
+                        class="inline-block w-6 h-6 border border-black dark:border-white rounded-full flex-shrink-0 flex items-center justify-center mr-2 transition-colors duration-300"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M7 20h10"></path>
+                          <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+                          <path
+                            d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"
+                          ></path>
+                          <path
+                            d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"
+                          ></path>
+                        </svg>
+                      </span>
+                      <div>
+                        <strong
+                          >{{ t('seedDetail.careLabels.fertilizer') }}</strong
+                        >
+                        {{ selectedSeed.careInstructions.fertilizer }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Harvesting Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('harvesting')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect
+                        x="2"
+                        y="7"
+                        width="20"
+                        height="14"
+                        rx="2"
+                        ry="2"
+                      ></rect>
+                      <path d="M16 2c0 2.5-3 2.5-3 5m-5 3v2m8-2v2"></path>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.harvesting') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.harvesting}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.harvesting"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <p class="mb-2 font-bold">
+                    {{ selectedSeed.harvesting.time }}
+                  </p>
+                  <p class="text-sm">{{ selectedSeed.harvesting.tips }}</p>
+                </div>
+              </div>
+
+              <!-- Benefits Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('benefits')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"
+                      ></path>
+                      <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.benefits') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.benefits}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.benefits"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <ul class="space-y-1 pl-5">
+                    <li
+                      v-for="(benefit, index) in selectedSeed.benefits"
+                      :key="index"
+                      class="flex items-center text-sm"
+                    >
+                      <span
+                        class="inline-block w-4 h-4 bg-black dark:bg-white text-white dark:text-black flex-shrink-0 flex items-center justify-center rounded-full mr-3 text-xs transition-colors duration-300"
+                      >
+                        +
+                      </span>
+                      <span>{{ benefit }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Common Problems Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('problems')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.problems') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.problems}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.problems"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <ul class="space-y-1 pl-5">
+                    <li
+                      v-for="(problem, index) in selectedSeed.commonProblems"
+                      :key="index"
+                      class="flex items-center text-sm"
+                    >
+                      <span
+                        class="inline-block w-4 h-4 bg-black dark:bg-white text-white dark:text-black flex-shrink-0 flex items-center justify-center rounded-full mr-3 text-xs transition-colors duration-300"
+                      >
+                        !
+                      </span>
+                      <span>{{ problem }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Bengaluru-specific Tips Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('bengaluruTips')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"
+                      ></path>
+                      <path d="M12 6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-.5"></path>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.bengaluruTips') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.bengaluruTips}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.bengaluruTips"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <ul class="space-y-2 text-sm">
+                    <li
+                      v-for="(tip, index) in selectedSeed.bengaluruTips"
+                      :key="index"
+                      class="flex items-start"
+                    >
+                      <span class="inline-block text-lg mr-2">🌱</span>
+                      <span>{{ tip }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Where to Find Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('sources')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M12 3a6 6 0 0 0-6 6v7h12v-7a6 6 0 0 0-6-6Z"
+                      ></path>
+                      <path d="M5 16a2 2 0 0 1-2 2" />
+                      <path d="M19 16a2 2 0 0 0 2 2" />
+                    </svg>
+                    <span>{{ t('seedDetail.sections.sources') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.sources}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.sources"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div
+                      v-for="(source, index) in selectedSeed.localSources"
+                      :key="index"
+                      class="border border-black dark:border-gray-700 p-3 text-sm transition-colors duration-300"
+                    >
+                      <div class="font-bold">{{ source.name }}</div>
+                      <div class="text-xs text-gray-600 dark:text-gray-400">
+                        {{ source.location }}
+                      </div>
+                      <div class="mt-1">{{ source.notes }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Companion Plants Accordion -->
+              <div class="border border-black dark:border-gray-700">
+                <button
+                  @click="toggleAccordion('companions')"
+                  class="w-full flex justify-between items-center p-4 font-bold"
+                >
+                  <div class="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M7 21a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4Z"
+                      ></path>
+                      <path d="M7 21V9a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12"></path>
+                    </svg>
+                    <span>{{ t('seedDetail.sections.companions') }}</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :class="{'rotate-180': accordions.companions}"
+                    class="transition-transform duration-300"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  v-show="accordions.companions"
+                  class="p-4 pt-0 bg-gray-100/50 dark:bg-gray-900/50 transition-all duration-300"
+                >
+                  <div class="flex flex-wrap gap-2">
+                    <div
+                      v-for="(companion, index) in selectedSeed.companionPlants"
+                      :key="index"
+                      class="px-3 py-1 border border-black dark:border-gray-700 text-sm transition-colors duration-300"
+                    >
+                      {{ companion }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer
+        class="py-8 px-8 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300"
+      >
+        <div
+          class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center"
+        >
+          <div class="mb-4 md:mb-0">
+            <a
+              href="#"
+              class="text-xl font-bold tracking-tighter flex items-center"
+            >
+              <span class="mr-1">SEEDBANK</span
+              ><span class="text-xs align-text-top tracking-wider bg-black dark:bg-white text-white dark:text-black px-1"><Base>Bengaluru</Base></span>
+            </a>
+          </div>
+          <div class="text-xs text-gray-600 dark:text-gray-400">
+            {{ t('footer.copyright') }}
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+  </body>
+</html>
