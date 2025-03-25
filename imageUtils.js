@@ -1,7 +1,7 @@
 // Image Utility Functions for SeedBank
 
 // Configuration
-const config = {
+const iconfig = {
     usePlaceholders: false, // Set to false when real images are available
     placeholderBaseUrl: "/api/placeholder", // For placeholder service
     imageFallbackPath: "/images/placeholder-seed.jpg" // Fallback image

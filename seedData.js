@@ -6,6 +6,7 @@ const seedbank = {
             id: "methi",
             name: "Fenugreek",
             localName: "Methi",
+            kannadaName: "ಮೆಂಥ್ಯ",
             scientificName: "Trigonella foenum-graecum",
             category: "leafyGreens",
             difficulty: 1,
@@ -15,6 +16,8 @@ const seedbank = {
             seasons: ["summer", "winter"],
             description:
                 "Methi or fenugreek is a popular leafy green in Indian cuisine with a distinctive flavor. The leaves are harvested young for cooking, while seeds are used as a spice.",
+            kannadaDescription:
+                "ಮೆಂಥ್ಯವು ಭಾರತೀಯ ಅಡುಗೆಯಲ್ಲಿ ಜನಪ್ರಿಯ ಎಲೆ ತರಕಾರಿಯಾಗಿದ್ದು, ವಿಶಿಷ್ಟ ರುಚಿ ಹೊಂದಿದೆ. ಎಲೆಗಳನ್ನು ಅಡುಗೆಗಾಗಿ ಕೊಯ್ಯಲಾಗುತ್ತದೆ, ಮತ್ತು ಬೀಜಗಳನ್ನು ಮಸಾಲೆಗಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ.",
             imagePath: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJQDnLctnc1V77m5FW56YIhDmdOMmjSdML8Q&s", // Image path for future use
             plantingSteps: [
                 "Soak seeds overnight to improve germination",
@@ -23,12 +26,26 @@ const seedbank = {
                 "Water gently but thoroughly",
                 "Place in a sunny location",
             ],
+            kannadaPlantingSteps: [
+                "ಮೊಳಕೆಯೊಡೆಯುವಿಕೆಯನ್ನು ಸುಧಾರಿಸಲು ಬೀಜಗಳನ್ನು ರಾತ್ರಿ ನೀರಿನಲ್ಲಿ ನೆನೆಸಿ",
+                "ಚೆನ್ನಾಗಿ ಒಣಗುವ ಮಣ್ಣಿನಿಂದ ಮಡಕೆ ಅಥವಾ ಟ್ರೇ ತುಂಬಿಸಿ",
+                "ಬೀಜಗಳನ್ನು ಸಮನಾಗಿ ಹರಡಿ ಮತ್ತು 1/4 ಇಂಚು ಮಣ್ಣಿನಿಂದ ಮುಚ್ಚಿ",
+                "ನಿಧಾನವಾಗಿ ಆದರೆ ಸಂಪೂರ್ಣವಾಗಿ ನೀರು ಹಾಕಿ",
+                "ಸೂರ್ಯನ ಬೆಳಕಿರುವ ಸ್ಥಳದಲ್ಲಿ ಇಡಿ",
+            ],
             benefits: [
                 "Rich in iron, vitamins and minerals",
                 "Known for medicinal properties including blood sugar regulation",
                 "Easy to grow with minimal care",
                 "Both leaves and seeds are useful",
                 "Drought tolerant once established",
+            ],
+            kannadaBenefits: [
+                "ಕಬ್ಬಿಣ, ವಿಟಮಿನ್‌ಗಳು ಮತ್ತು ಖನಿಜಗಳಿಂದ ಸಮೃದ್ಧವಾಗಿದೆ",
+                "ರಕ್ತದಲ್ಲಿನ ಸಕ್ಕರೆ ಮಟ್ಟವನ್ನು ನಿಯಂತ್ರಿಸುವುದು ಸೇರಿದಂತೆ ಔಷಧೀಯ ಗುಣಗಳಿಗೆ ಹೆಸರುವಾಸಿ",
+                "ಕನಿಷ್ಠ ಆರೈಕೆಯೊಂದಿಗೆ ಬೆಳೆಯಲು ಸುಲಭ",
+                "ಎಲೆಗಳು ಮತ್ತು ಬೀಜಗಳು ಎರಡೂ ಉಪಯುಕ್ತ",
+                "ಒಮ್ಮೆ ಸ್ಥಾಪಿತವಾದ ನಂತರ ಬರ ಸಹಿಷ್ಣುತೆಯನ್ನು ಹೊಂದಿರುತ್ತದೆ",
             ],
             careInstructions: {
                 light:
@@ -41,9 +58,24 @@ const seedbank = {
                 fertilizer:
                     "Light application of compost or balanced organic fertilizer at planting.",
             },
+            kannadaCareInstructions: {
+                light:
+                    "ಪೂರ್ಣ ಸೂರ್ಯನ ಬೆಳಕಿನಿಂದ ಭಾಗಶಃ ನೆರಳಿನವರೆಗೆ. ಪ್ರತಿದಿನ ಕನಿಷ್ಠ 4-6 ಗಂಟೆಗಳ ನೇರ ಸೂರ್ಯನ ಬೆಳಕು.",
+                water:
+                    "ನಿಯಮಿತವಾಗಿ ನೀರು ಹಾಕಿ ಆದರೆ ನೀರುಣಿಸುವಿಕೆಯ ನಡುವೆ ಮಣ್ಣು ಸ್ವಲ್ಪ ಒಣಗಲು ಬಿಡಿ. ಬರ ಸಹಿಷ್ಣು.",
+                soil: "ಮಧ್ಯಮ ಫಲವತ್ತಾದ, ಚೆನ್ನಾಗಿ ಒಣಗುವ ಮಣ್ಣು. pH 6.0-7.0 ಅನ್ನು ಇಷ್ಟಪಡುತ್ತದೆ.",
+                spacing:
+                    "ಸಸಿಗಳು ಕಾಣಿಸಿಕೊಂಡ ನಂತರ 2-3 ಇಂಚುಗಳ ಅಂತರದಲ್ಲಿ ವಿರಳಗೊಳಿಸಿ.",
+                fertilizer:
+                    "ನೆಡುವಾಗ ಕಾಂಪೋಸ್ಟ್ ಅಥವಾ ಸಮತೋಲಿತ ಸಾವಯವ ಗೊಬ್ಬರದ ಹಗುರ ಬಳಕೆ.",
+            },
             harvesting: {
                 time: "Harvest leaves when plants are 4-6 inches tall, about 20-30 days after sowing.",
                 tips: "Cut entire plants or harvest the upper leaves for continuous production. Younger leaves have milder flavor.",
+            },
+            kannadaHarvesting: {
+                time: "ಸಸಿಗಳು 4-6 ಇಂಚು ಎತ್ತರವಾದಾಗ, ಬೀಜ ಬಿತ್ತಿದ ಸುಮಾರು 20-30 ದಿನಗಳ ನಂತರ ಎಲೆಗಳನ್ನು ಕೊಯ್ಲು ಮಾಡಿ.",
+                tips: "ನಿರಂತರ ಉತ್ಪಾದನೆಗಾಗಿ ಇಡೀ ಸಸಿಗಳನ್ನು ಕತ್ತರಿಸಿ ಅಥವಾ ಮೇಲಿನ ಎಲೆಗಳನ್ನು ಕೊಯ್ಯಿರಿ. ಯುವ ಎಲೆಗಳು ಮೃದುವಾದ ರುಚಿ ಹೊಂದಿರುತ್ತವೆ.",
             },
             commonProblems: [
                 "Powdery mildew during monsoon season",
@@ -51,11 +83,23 @@ const seedbank = {
                 "Aphids and leaf miners (treat with neem oil)",
                 "Slow germination (soak seeds before planting)",
             ],
+            kannadaCommonProblems: [
+                "ಮುಂಗಾರು ಋತುವಿನಲ್ಲಿ ಪುಡಿ ಬೂಷ್ಟು",
+                "ನೀರು ನಿಂತ ಮಣ್ಣಿನಲ್ಲಿ ಬೇರು ಕೊಳೆತ ರೋಗ",
+                "ಸೊಪ್ಪು ಹೇನುಗಳು ಮತ್ತು ಎಲೆ ಕೊರೆಯುವ ಕೀಟಗಳು (ಬೇವಿನ ಎಣ್ಣೆಯಿಂದ ಚಿಕಿತ್ಸೆ ನೀಡಿ)",
+                "ನಿಧಾನ ಮೊಳಕೆಯೊಡೆಯುವಿಕೆ (ನೆಡುವ ಮೊದಲು ಬೀಜಗಳನ್ನು ನೆನೆಸಿ)",
+            ],
             bengaluruTips: [
                 "Perfect for growing March-May in partial shade",
                 "Sow every 2-3 weeks for continuous harvest",
                 "Grows well in containers on balconies and terraces",
                 "In summer, water early morning or evening",
+            ],
+            kannadaBengaluruTips: [
+                "ಭಾಗಶಃ ನೆರಳಿನಲ್ಲಿ ಮಾರ್ಚ್-ಮೇ ತಿಂಗಳಲ್ಲಿ ಬೆಳೆಯಲು ಸೂಕ್ತವಾಗಿದೆ",
+                "ನಿರಂತರ ಕೊಯ್ಲಿಗಾಗಿ ಪ್ರತಿ 2-3 ವಾರಗಳಿಗೊಮ್ಮೆ ಬಿತ್ತಿ",
+                "ಬಾಲ್ಕನಿಗಳು ಮತ್ತು ಮಾಳಿಗೆಗಳ ಮೇಲೆ ಪಾತ್ರೆಗಳಲ್ಲಿ ಚೆನ್ನಾಗಿ ಬೆಳೆಯುತ್ತದೆ",
+                "ಬೇಸಿಗೆಯಲ್ಲಿ, ಬೆಳಿಗ್ಗೆ ಬೇಗ ಅಥವಾ ಸಂಜೆ ನೀರು ಹಾಕಿ",
             ],
             localSources: [
                 {
@@ -69,11 +113,29 @@ const seedbank = {
                     notes: "Cooking methi seeds will germinate well",
                 },
             ],
+            kannadaLocalSources: [
+                {
+                    name: "ಸಹಜ ಸೀಡ್ಸ್",
+                    location: "ಬೆಂಗಳೂರಿನಲ್ಲಿ ಆನ್‌ಲೈನ್ ವಿತರಣೆ",
+                    notes: "ಸಾವಯವ, ಸ್ಥಳೀಯವಾಗಿ ಹೊಂದಿಕೊಂಡ ತಳಿಗಳು",
+                },
+                {
+                    name: "ಯಾವುದೇ ಸ್ಥಳೀಯ ಕಿರಾಣಿ ಅಂಗಡಿ",
+                    location: "ಬೆಂಗಳೂರಿನಾದ್ಯಂತ",
+                    notes: "ಅಡುಗೆಗೆ ಬಳಸುವ ಮೆಂಥ್ಯದ ಬೀಜಗಳು ಚೆನ್ನಾಗಿ ಮೊಳಕೆಯೊಡೆಯುತ್ತವೆ",
+                },
+            ],
             companionPlants: [
                 "Coriander",
                 "Spinach",
                 "Radish",
                 "Onions",
+            ],
+            kannadaCompanionPlants: [
+                "ಕೊತ್ತಂಬರಿ",
+                "ಪಾಲಕ್",
+                "ಮೂಲಂಗಿ",
+                "ಈರುಳ್ಳಿ",
             ],
         },
         {

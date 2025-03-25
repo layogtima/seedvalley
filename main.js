@@ -55,14 +55,23 @@ const loadAllAssets = async () => {
         await loadAsset('style.css', 'style');
         await loadAsset('onboarding.css', 'style');
 
+        // Load Dexie.js from CDN first
+        await loadAsset('https://unpkg.com/dexie@3.2.3/dist/dexie.min.js', 'script');
+
         // Load modular JavaScript components
         await loadAsset('seedData.js', 'script');
         await loadAsset('imageUtils.js', 'script');
         await loadAsset('i18n.js', 'script');
         await loadAsset('onboarding.js', 'script');
 
-        // Load main app last, as it depends on all modules
+        // Load database components
+        await loadAsset('db.js', 'script');
+
+        // Load main app - we'll store a reference to it for the DB integration
         await loadAsset('app.js', 'script');
+
+        // Load database integration after app is loaded
+        await loadAsset('dbIntegration.js', 'script');
 
         log('All assets loaded successfully');
         return true;

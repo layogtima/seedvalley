@@ -3,7 +3,8 @@
 
 const { createApp, ref, computed, onMounted, watch } = Vue;
 
-createApp({
+// Create the app and store a reference for database integration
+const vueApp = createApp({
     setup() {
         // Import seed data from external file
         const seedData = seedbank || {}; // Fallback to empty object if not loaded
@@ -442,4 +443,10 @@ createApp({
             t: (key, replacements = {}) => i18n.t(key, replacements)
         };
     },
-}).mount("#app");
+});
+
+// Mount the app
+vueApp.mount("#app");
+
+// Expose the app instance globally for database integration
+window.vueApp = vueApp;
