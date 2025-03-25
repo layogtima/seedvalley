@@ -13,9 +13,7 @@ const config = {
 
 // Debug logger
 const log = (message, type = 'info') => {
-    if (config.debug || type === 'error') {
-        console[type](`[SeedBank] ${message}`);
-    }
+    //
 };
 
 // Asset loader - loads scripts and styles with proper error handling
@@ -55,22 +53,21 @@ const loadAllAssets = async () => {
         await loadAsset('style.css', 'style');
         await loadAsset('onboarding.css', 'style');
 
-        // Load Dexie.js from CDN first
+        // Load Dexie.js from CDN first - make sure this loads before db.js
         await loadAsset('https://unpkg.com/dexie@3.2.3/dist/dexie.min.js', 'script');
 
-        // Load modular JavaScript components
-        await loadAsset('seedData.js', 'script');
+        // Load i18n and utilities before database components
         await loadAsset('imageUtils.js', 'script');
         await loadAsset('i18n.js', 'script');
         await loadAsset('onboarding.js', 'script');
 
-        // Load database components
+        // Load database components next - we'll use the more robust version
         await loadAsset('db.js', 'script');
 
-        // Load main app - we'll store a reference to it for the DB integration
+        // Load main app after database is set up
         await loadAsset('app.js', 'script');
 
-        // Load database integration after app is loaded
+        // Load database integration last - after app is loaded
         await loadAsset('dbIntegration.js', 'script');
 
         log('All assets loaded successfully');

@@ -1,128 +1,198 @@
+// dbIntegration.js - Complete rewrite
 // SeedBank Database Integration with Vue App
 
-// Create a compatibility layer for the app.js which expects seedbank global variable
-window.seedbank = {
-  loadingMessages: [
-    "ANALYZING GROWING CONDITIONS",
-    "CHECKING SOIL TYPES",
-    "CALCULATING GROWING TIMES",
-    "MEASURING WATER NEEDS",
-    "PREPARING PLANTING CALENDAR",
-  ],
-  seeds: [], // Will be populated by the database
-  categories: [] // Will be populated by the database
-};
-
 document.addEventListener('DOMContentLoaded', () => {
-  // Make sure database is initialized first
+  // Initialize as soon as DOM is loaded
   if (window.SeedBankDB) {
-    const { initializeDatabase, getAllSeeds, getSeedDetails, getAllCategories, filterSeeds } = window.SeedBankDB;
+    console.log("Initializing SeedBank database...");
+    window.SeedBankDB.initializeDatabase();
+  }
 
-    // Replace Vue app's data loading methods
-    if (window.vueApp) {
-      const app = window.vueApp;
+  // Create a compatibility layer for the app.js which expects seedbank global variable
+  seedbank = {
+    loadingMessages: [
+      "ANALYZING GROWING CONDITIONS",
+      "CHECKING SOIL TYPES",
+      "CALCULATING GROWING TIMES",
+      "MEASURING WATER NEEDS",
+      "PREPARING PLANTING CALENDAR",
+    ],
+    seeds: [], // Will be populated by the database
+    categories: [] // Will be populated by the database
+  };
 
-      // Override loadSeedData method
-      const originalLoadSeedData = app.loadSeedData;
-      app.loadSeedData = async function () {
-        try {
-          this.cycleLoadingMessages();
+  // Wait for Vue app to be mounted before replacing its methods
+  const waitForVueApp = setInterval(() => {
+    if (window.vueApp && window.vueApp._instance) {
+      clearInterval(waitForVueApp);
+      integrateWithVueApp();
+    }
+  }, 100);
 
-          // Initially populate DB if needed
-          await initializeDatabase();
+  function integrateWithVueApp() {
+    if (!window.SeedBankDB) {
+      console.error("SeedBank database not found. Integration failed.");
+      return;
+    }
 
-          // Set initial time and start updating
-          this.updateTime();
-          setInterval(this.updateTime, 60000); // Update time every minute
+    const { getAllSeeds, getSeedDetails, getAllCategories, filterSeeds } = window.SeedBankDB;
+    const appInstance = window.vueApp._instance.proxy;
 
-          // Get the current language
-          const lang = this.currentLanguage.value;
+    // Override loadSeedData method - Completely replace it to use DB
+    appInstance.loadSeedData = async function () {
+      try {
+        this.cycleLoadingMessages();
 
-          // Load seeds and categories from database
-          setTimeout(async () => {
+        // Set initial time and start updating
+        this.updateTime();
+        setInterval(this.updateTime, 60000); // Update time every minute
+
+        // Get the current language
+        const lang = this.currentLanguage;
+
+        // Simulate loading for aesthetic purposes
+        setTimeout(async () => {
+          try {
             // Load categories first
-            this.categories.value = await getAllCategories(lang);
+            const categories = await getAllCategories(lang);
+            this.categories = categories;
 
             // Load seeds with filtering options if needed
             const seeds = await getAllSeeds(lang);
-            this.seeds.value = seeds;
+            this.seeds = seeds;
 
-            this.loading.value = false;
-          }, 1500); // Keep the loading animation for aesthetics
+            // Update compatibility layer data
+            seedbank.categories = categories;
+            seedbank.seeds = seeds;
 
-        } catch (error) {
-          console.error("Error loading seed data:", error);
-          this.loading.value = false;
+            this.loading = false;
+          } catch (dbError) {
+            console.error("Error loading data from database:", dbError);
+
+            // Fallback to static data if database fails
+            if (seedbank.seeds.length > 0) {
+              this.seeds = seedbank.seeds;
+              this.categories = seedbank.categories;
+            }
+
+            this.loading = false;
+          }
+        }, 1500);
+      } catch (error) {
+        console.error("Error loading seed data:", error);
+        this.loading = false;
+      }
+    };
+
+    // Override openSeedDetail to fetch complete seed details from DB
+    appInstance.openSeedDetail = async function (seed) {
+      try {
+        // Show loading state
+        const originalSeed = seed;
+        this.loading = true;
+
+        // Get full seed details from database
+        const seedDetails = await getSeedDetails(seed.id, this.currentLanguage);
+
+        // If we got details, use them, otherwise use the original seed
+        if (seedDetails) {
+          this.selectedSeed = seedDetails;
+        } else {
+          this.selectedSeed = originalSeed;
         }
-      };
 
-      // Override openSeedDetail to fetch complete seed details
-      const originalOpenSeedDetail = app.openSeedDetail;
-      app.openSeedDetail = async function (seed) {
-        try {
-          // Show loading state if needed
+        document.body.style.overflow = "hidden"; // Prevent background scrolling
 
-          // Get full seed details from database
-          const seedDetails = await getSeedDetails(seed.id, this.currentLanguage.value);
+        // Reset accordions state - only keep planting open
+        Object.keys(this.accordions).forEach(key => {
+          this.accordions[key] = key === 'planting';
+        });
 
-          // Call original function with enhanced seed data
-          originalOpenSeedDetail.call(this, seedDetails);
-        } catch (error) {
-          console.error("Error loading seed details:", error);
-        }
-      };
+        this.loading = false;
+      } catch (error) {
+        console.error("Error loading seed details:", error);
 
-      // Override filter and sort functions
-      const originalSetActiveCategory = app.setActiveCategory;
-      app.setActiveCategory = async function (categoryId) {
-        originalSetActiveCategory.call(this, categoryId);
+        // Fallback to original behavior
+        this.selectedSeed = seed;
+        document.body.style.overflow = "hidden";
 
-        // Reload seeds with new filter
-        this.reloadFilteredSeeds();
-      };
+        this.loading = false;
+      }
+    };
 
-      // Add method to reload filtered seeds
-      app.reloadFilteredSeeds = async function () {
+    // Override filter and sort functions to use DB filtering
+    appInstance.setActiveCategory = async function (categoryId) {
+      this.activeCategory = categoryId;
+
+      // Reload seeds with new filter
+      this.reloadFilteredSeeds();
+
+      // Scroll to seeds section if on mobile
+      if (window.innerWidth < 768) {
+        document
+          .getElementById("seeds")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
+    // Add method to reload filtered seeds using DB
+    appInstance.reloadFilteredSeeds = async function () {
+      try {
+        this.loading = true;
+
         const options = {
-          category: this.activeCategory.value,
-          sortBy: this.sortBy.value
+          category: this.activeCategory,
+          sortBy: this.sortBy
         };
 
-        const filteredSeeds = await filterSeeds(options, this.currentLanguage.value);
-        this.seeds.value = filteredSeeds;
-      };
+        const filteredSeeds = await filterSeeds(options, this.currentLanguage);
+        this.seeds = filteredSeeds;
 
-      // Override change language to reload data in new language
-      const originalChangeLanguage = app.changeLanguage;
-      app.changeLanguage = async function (lang) {
-        // Call original language change function
-        if (originalChangeLanguage.call(this, lang)) {
+        this.loading = false;
+      } catch (error) {
+        console.error("Error filtering seeds:", error);
+        this.loading = false;
+      }
+    };
+
+    // Override change language to reload data in new language from DB
+    appInstance.changeLanguage = async function (lang) {
+      // Call i18n language change function
+      if (i18n.changeLang(lang)) {
+        this.currentLanguage = lang;
+        document.documentElement.setAttribute('lang', lang);
+        updateTime(); // Update time and date display with new locale
+
+        try {
           // Reload data with new language
-          this.categories.value = await getAllCategories(lang);
+          const categories = await getAllCategories(lang);
+          this.categories = categories;
 
           const options = {
-            category: this.activeCategory.value,
-            sortBy: this.sortBy.value
+            category: this.activeCategory,
+            sortBy: this.sortBy
           };
 
-          this.seeds.value = await filterSeeds(options, lang);
+          const seeds = await filterSeeds(options, lang);
+          this.seeds = seeds;
 
           // If a seed is selected, reload its details
-          if (this.selectedSeed.value) {
-            const seedDetails = await getSeedDetails(this.selectedSeed.value.id, lang);
-            this.selectedSeed.value = seedDetails;
+          if (this.selectedSeed) {
+            const seedDetails = await getSeedDetails(this.selectedSeed.id, lang);
+            if (seedDetails) {
+              this.selectedSeed = seedDetails;
+            }
           }
 
           return true;
+        } catch (error) {
+          console.error("Error changing language:", error);
+          return false;
         }
-        return false;
-      };
+      }
+      return false;
+    };
 
-      console.log("SeedBank database integration complete!");
-    } else {
-      console.error("Vue app not found. Database integration failed.");
-    }
-  } else {
-    console.error("SeedBank database not found. Integration failed.");
+    console.log("SeedBank database integration complete!");
   }
 });

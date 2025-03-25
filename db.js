@@ -774,22 +774,22 @@ const sources = [
 ];
 
 // Function to initialize database with data
-async function initializeDatabase(forceReset = true) {
+async function initializeDatabase(forceReset = false) {
   try {
     // Check if database already has data
     const seedCount = await db.seeds.count();
-    
+
     if (seedCount === 0 || forceReset) {
       // Database is empty or force reset requested, populate with initial data
       console.log("Initializing database with seed data...");
-      
+
       // Clear existing data if needed
-      if (seedCount > 0) {
-        console.log("Clearing existing data first...");
+      if (seedCount > 0 && forceReset) {
+        console.log("Force reset requested. Clearing existing data...");
         await db.delete();
         await db.open();
       }
-      
+
       // Add data to tables in order of dependency
       await db.categories.bulkAdd(categories);
       await db.categoryTranslations.bulkAdd(categoryTranslations);
@@ -799,16 +799,18 @@ async function initializeDatabase(forceReset = true) {
       await db.instructionTranslations.bulkAdd(instructionTranslations);
       await db.companionships.bulkAdd(companionships);
       await db.sources.bulkAdd(sources);
-      
+
       console.log("Database initialized successfully!");
+      return true;
     } else {
       console.log("Database already contains data. Skipping initialization.");
+      return false;
     }
   } catch (error) {
     console.error("Error initializing database:", error);
+    return false;
   }
 }
-
 // Helper functions for retrieving data
 
 // Get all seeds with translations for a specific language

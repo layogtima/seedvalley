@@ -220,6 +220,10 @@ const vueApp = createApp({
 
         // Filtered seeds based on active category
         const filteredSeeds = computed(() => {
+            if (!seeds.value || seeds.value.length === 0) {
+                return [];
+            }
+
             if (activeCategory.value === "all") {
                 return seeds.value;
             }
@@ -230,6 +234,10 @@ const vueApp = createApp({
 
         // Sort seeds based on chosen sort method
         const sortedSeeds = computed(() => {
+            if (!filteredSeeds.value || filteredSeeds.value.length === 0) {
+                return [];
+            }
+
             const sorted = [...filteredSeeds.value];
 
             switch (sortBy.value) {
