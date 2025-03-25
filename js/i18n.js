@@ -1,4 +1,4 @@
-// SeedBank Internationalization (i18n) Module
+// SEEDVALLEY Internationalization (i18n) Module
 
 const translations = {
     // English translations
@@ -117,7 +117,7 @@ const translations = {
         // About section
         about: {
             title: "ABOUT",
-            description: "SeedBank is your hyperlocal guide to growing food in Bengaluru. We believe everyone can grow at least some of their own food, even in an urban environment.",
+            description: "SeedValley is your hyperlocal guide to growing food in Bengaluru. We believe everyone can grow at least some of their own food, even in an urban environment.",
             quote: "\"To plant a garden is to believe in tomorrow.\"",
             quoteAuthor: "— Audrey Hepburn",
             climate: "Our growing recommendations are based on Bengaluru's unique climate, with special attention to our elevation (920m), moderate year-round temperatures (15-35°C), and distinct wet and dry seasons. All advice is tailored to urban contexts, including balcony gardens, container growing, and small plots.",

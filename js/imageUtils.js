@@ -1,4 +1,4 @@
-// Image Utility Functions for SeedBank
+// Image Utility Functions for SeedValley
 
 // Configuration
 const config = {
