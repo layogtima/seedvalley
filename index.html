@@ -3,11 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SEEDBANK | Bengaluru</title>
+    <title>SEEDVALLEY | Bengaluru</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/5b83e322a9.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/5b83e322a9.js"
+      crossorigin="anonymous"
+    ></script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -45,7 +48,7 @@
               },
             },
             animation: {
-              marquee: "marquee 30s linear infinite",
+              marquee: "marquee 300s linear infinite",
               "fade-in": "fadeIn 0.5s ease-out",
               "fade-out": "fadeOut 0.3s ease-out",
               "slide-up": "slideUp 0.5s ease-out",
@@ -132,7 +135,7 @@
           href="#"
           class="text-xl font-bold tracking-tighter flex items-center"
         >
-          <span class="mr-1">SEEDBANK</span
+          <span class="mr-1">SEEDVALLEY</span
           ><span class="text-xs align-text-top"></span>
           <span
             class="ml-2 text-xs tracking-wider bg-black dark:bg-white text-white dark:text-black px-1"
@@ -425,198 +428,187 @@
       <section id="seeds" class="py-24 px-8">
         <div class="max-w-6xl mx-auto">
           <div
-            class="flex flex-col md:flex-row justify-between items-start gap-8 mb-16"
+            class="flex flex-col md:flex-row justify-between items-end gap-8"
           >
             <!-- Left: Title -->
             <div>
               <h2 class="text-5xl font-bold">
                 {{ activeCategory === 'all' ? t('seeds.allSeeds') :
                 getCategoryName(activeCategory).toUpperCase() }}
-                <span class="text-xs align-super"> {{ t('seeds.title') }}</span>
               </h2>
-              <p class="text-sm mt-4 max-w-xl">
-                {{ t('seeds.subtitle') }}
-                <span class="font-bold"
-                  >{{ t('seeds.currentSeason') }}
-                  <span v-html="getSeasonIcon()"></span>
-                  {{ currentSeason }}</span
-                >
-              </p>
-              <p class="text-xs mt-2">
-                {{ currentDate }} • {{ t('seeds.dateFilter') }}
-              </p>
+              <p class="text-sm mt-4 max-w-xl">{{ t('seeds.subtitle') }}</p>
             </div>
 
-            <!-- Right: Filter Panel -->
+            <!-- Right: Detailed Legend -->
             <div
-              class="bg-gray-100 dark:bg-gray-800 p-6 border border-black dark:border-gray-700 w-full md:w-auto transition-colors duration-300"
+              class="mt-4 bg-gray-100 dark:bg-gray-800 p-4 border border-black dark:border-gray-700 transition-colors duration-300 animate-fade-in"
             >
-              <div class="flex flex-col space-y-4">
-                <!-- Categories -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <h3 class="text-sm uppercase tracking-wider mb-2">
-                    {{ t('seeds.category') }}
-                  </h3>
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      @click="setActiveCategory('all')"
-                      class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
-                      :class="activeCategory === 'all' ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
+                  <div class="flex items-center gap-2 mb-1">
+                    <span
+                      class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
                     >
-                      {{ t('seeds.allSeeds') }}
-                    </button>
-                    <button
-                      v-for="category in categories"
-                      :key="category.id"
-                      @click="setActiveCategory(category.id)"
-                      class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
-                      :class="activeCategory === category.id ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m4.9 4.9 14.2 14.2"></path>
+                      </svg>
+                    </span>
+                    <span class="text-xs font-bold"
+                      >{{ t('seeds.legend.difficulty') }}</span
                     >
-                      {{ category.name.toUpperCase() }}
-                    </button>
                   </div>
+                  <p class="text-xs text-left">
+                    {{ t('seeds.legend.difficultyDesc') }}
+                  </p>
                 </div>
-
-                <!-- Sorting -->
                 <div>
-                  <h3 class="text-sm uppercase tracking-wider mb-2">
-                    {{ t('seeds.sortBy') }}
-                  </h3>
-                  <select
-                    v-model="sortBy"
-                    class="bg-white dark:bg-gray-900 border border-black dark:border-gray-700 p-2 text-sm w-full transition-colors duration-300"
-                  >
-                    <option value="growTime">
-                      {{ t('seeds.sortOptions.growTime') }}
-                    </option>
-                    <option value="name">
-                      {{ t('seeds.sortOptions.name') }}
-                    </option>
-                    <option value="difficulty">
-                      {{ t('seeds.sortOptions.difficulty') }}
-                    </option>
-                    <option value="yield">
-                      {{ t('seeds.sortOptions.yield') }}
-                    </option>
-                    <option value="water">
-                      {{ t('seeds.sortOptions.water') }}
-                    </option>
-                  </select>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span
+                      class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M12 2v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m15.66 15.66 1.41 1.41"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m8.34 15.66-1.41 1.41"></path>
+                        <circle cx="12" cy="12" r="4"></circle>
+                      </svg>
+                    </span>
+                    <span class="text-xs font-bold"
+                      >{{ t('seeds.legend.sunlight') }}</span
+                    >
+                  </div>
+                  <p class="text-xs text-left">
+                    {{ t('seeds.legend.sunlightDesc') }}
+                  </p>
                 </div>
-
-                <!-- Reset Button -->
-                <button
-                  @click="resetFilters"
-                  class="px-3 py-2 mt-2 text-xs border border-black dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-300"
-                >
-                  {{ t('seeds.reset') }}
-                </button>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span
+                      class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M12 22c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                        ></path>
+                        <path
+                          d="M12 12c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
+                        ></path>
+                      </svg>
+                    </span>
+                    <span class="text-xs font-bold"
+                      >{{ t('seeds.legend.water') }}</span
+                    >
+                  </div>
+                  <p class="text-xs text-left">
+                    {{ t('seeds.legend.waterDesc') }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Detailed Legend (Hidden by Default) -->
-        <div class="mt-4 mb-8 bg-gray-100 dark:bg-gray-800 p-4 border border-black dark:border-gray-700 transition-colors duration-300 animate-fade-in">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span
-                  class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+          <!-- Right: Filter Panel -->
+          <div
+            class="mt-10 mb-16 bg-gray-100 dark:bg-gray-800 p-6 border border-black dark:border-gray-700 w-full md:w-auto transition-colors duration-300"
+          >
+            <div class="flex flex-col space-y-4">
+              <!-- Categories -->
+              <div>
+                <h3 class="text-sm uppercase tracking-wider mb-2">
+                  {{ t('seeds.category') }}
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    @click="setActiveCategory('all')"
+                    class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
+                    :class="activeCategory === 'all' ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
                   >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="m4.9 4.9 14.2 14.2"></path>
-                  </svg>
-                </span>
-                <span class="text-xs font-bold"
-                  >{{ t('seeds.legend.difficulty') }}</span
-                >
-              </div>
-              <p class="text-xs text-left">
-                {{ t('seeds.legend.difficultyDesc') }}
-              </p>
-            </div>
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span
-                  class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    {{ t('seeds.allSeeds') }}
+                  </button>
+                  <button
+                    v-for="category in categories"
+                    :key="category.id"
+                    @click="setActiveCategory(category.id)"
+                    class="px-3 py-1 text-xs border border-black dark:border-gray-700 transition-colors duration-300"
+                    :class="activeCategory === category.id ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-gray-900 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800'"
                   >
-                    <path d="M12 2v2"></path>
-                    <path d="m4.93 4.93 1.41 1.41"></path>
-                    <path d="M2 12h2"></path>
-                    <path d="m19.07 4.93-1.41 1.41"></path>
-                    <path d="M20 12h2"></path>
-                    <path d="m15.66 15.66 1.41 1.41"></path>
-                    <path d="M12 20v2"></path>
-                    <path d="m8.34 15.66-1.41 1.41"></path>
-                    <circle cx="12" cy="12" r="4"></circle>
-                  </svg>
-                </span>
-                <span class="text-xs font-bold"
-                  >{{ t('seeds.legend.sunlight') }}</span
-                >
+                    {{ category.name.toUpperCase() }}
+                  </button>
+                </div>
               </div>
-              <p class="text-xs text-left">
-                {{ t('seeds.legend.sunlightDesc') }}
-              </p>
-            </div>
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span
-                  class="inline-flex items-center justify-center w-6 h-6 border border-black dark:border-white rounded-full"
+
+              <!-- Sorting -->
+              <div>
+                <h3 class="text-sm uppercase tracking-wider mb-2">
+                  {{ t('seeds.sortBy') }}
+                </h3>
+                <select
+                  v-model="sortBy"
+                  class="bg-white dark:bg-gray-900 border border-black dark:border-gray-700 p-2 text-sm w-full transition-colors duration-300"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path
-                      d="M12 22c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
-                    ></path>
-                    <path
-                      d="M12 12c4.97 0 9-2.24 9-5s-4.03-5-9-5-9 2.24-9 5 4.03 5 9 5z"
-                    ></path>
-                  </svg>
-                </span>
-                <span class="text-xs font-bold"
-                  >{{ t('seeds.legend.water') }}</span
-                >
+                  <option value="growTime">
+                    {{ t('seeds.sortOptions.growTime') }}
+                  </option>
+                  <option value="name">
+                    {{ t('seeds.sortOptions.name') }}
+                  </option>
+                  <option value="difficulty">
+                    {{ t('seeds.sortOptions.difficulty') }}
+                  </option>
+                  <option value="yield">
+                    {{ t('seeds.sortOptions.yield') }}
+                  </option>
+                  <option value="water">
+                    {{ t('seeds.sortOptions.water') }}
+                  </option>
+                </select>
               </div>
-              <p class="text-xs text-left">
-                {{ t('seeds.legend.waterDesc') }}
-              </p>
+
+              <!-- Reset Button -->
+              <button
+                @click="resetFilters"
+                class="px-3 py-2 mt-2 text-xs border border-black dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-300"
+              >
+                {{ t('seeds.reset') }}
+              </button>
             </div>
           </div>
-        </div>
-
-         
 
           <!-- Seeds Grid -->
           <div
@@ -1015,7 +1007,7 @@
       </section>
 
       <!-- About Section -->
-      <section id="about" class="py-24 px-8 transition-colors duration-300  bg-gray-100 dark:bg-gray-800">
+      <section id="about" class="py-24 px-8 transition-colors duration-300">
         <div class="max-w-4xl mx-auto">
           <h2 class="text-5xl font-bold mb-12">{{ t('about.title') }}</h2>
 
@@ -1103,11 +1095,6 @@
             </div>
 
             <div class="mt-8 text-sm">
-              <p>
-                {{ t('about.created') }}
-                <a href="#" class="underline">{{ t('about.company') }}</a> {{
-                t('about.for') }}
-              </p>
               <p>{{ t('about.dataSource') }}</p>
             </div>
           </div>
@@ -1158,9 +1145,7 @@
                   class="w-full h-full object-cover"
                 />
                 <!-- Seasonal Badges -->
-                <div
-                  class="absolute top-0 right-0 right-0 p-2 flex gap-2"
-                >
+                <div class="absolute top-0 right-0 right-0 p-2 flex gap-2">
                   <span
                     v-for="season in selectedSeed.seasons"
                     :key="season"
@@ -1899,17 +1884,32 @@
         <div
           class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center"
         >
-          <div class="mb-4 md:mb-0">
+          <div
+            class="text-gray-600 dark:text-gray-400 text-xs flex items-center"
+          >
+            <span>Built with</span>
             <a
-              href="#"
-              class="text-xl font-bold tracking-tighter flex items-center"
+              href="https://layogtima.com/mono/"
+              target="_blank"
+              class="font-mono font-bold tracking-tight ml-2 relative group"
             >
-              <span class="mr-1">SEEDBANK</span
-              ><span class="text-xs align-text-top tracking-wider bg-black dark:bg-white text-white dark:text-black px-1"><Base>Bengaluru</Base></span>
+              <span
+                class="transition-colors duration-300 group-hover:text-black dark:group-hover:text-white"
+                >MONO</span
+              >
+              <span
+                class="absolute -bottom-px left-0 w-0 h-px bg-black dark:bg-white transition-all duration-300 group-hover:w-full"
+              ></span>
             </a>
           </div>
           <div class="text-xs text-gray-600 dark:text-gray-400">
-            {{ t('footer.copyright') }}
+            <p>
+              {{ t('about.created') }}
+              <a href="https://layogtima.com/" target="_blank" class="underline"
+                >{{ t('about.company') }}</a
+              >
+              {{ t('about.for') }}
+            </p>
           </div>
         </div>
       </footer>

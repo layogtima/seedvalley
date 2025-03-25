@@ -1133,12 +1133,6 @@ const seedbank = {
     // Categories data
     categories: [
         {
-            id: "quickHarvest",
-            name: "Quick Harvest",
-            description: "Crops that can be harvested within 30 days",
-            icon: "bolt",
-        },
-        {
             id: "leafyGreens",
             name: "Leafy Greens",
             description: "Vegetables grown primarily for their edible leaves",
@@ -1166,13 +1160,7 @@ const seedbank = {
             id: "legumes",
             name: "Legumes",
             description: "Plants that produce pods with seeds inside",
-            icon: "bean",
-        },
-        {
-            id: "brassicas",
-            name: "Brassicas",
-            description: "Cabbage family vegetables",
-            icon: "cabbage",
+            icon: "bean"
         }
     ],
 

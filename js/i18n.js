@@ -14,7 +14,7 @@ const translations = {
 
         // Header/Hero
         hero: {
-            title: "SEEDBANK",
+            title: "SEEDVALLEY",
             subtitle: "Your personal guide to growing food in Bengaluru.",
             description: "Plant what thrives now, harvest what you love.",
             findSeeds: "Find Seeds",
@@ -24,7 +24,7 @@ const translations = {
 
         // Onboarding
         onboarding: {
-            welcome: "Welcome to SeedBank",
+            welcome: "Welcome to SEEDVALLEY!",
             subtitle: "Your personal guide to growing food in Bengaluru.",
             step1: {
                 title: "Discover Seeds",
@@ -124,9 +124,9 @@ const translations = {
             resources: "LOCAL RESOURCES",
             tips: "BENGALURU GROWING TIPS",
             created: "Created by",
-            company: "Absurd Industries",
+            company: "Layogtima",
             for: "for Bengaluru's urban farmers.",
-            dataSource: "Data compiled from Karnataka State Department of Horticulture and experienced local growers."
+            dataSource: "Data compiled from various sources, including Karnataka State Department of Horticulture, Vikaspedia and other sources."
         },
 
         // Seed detail modal
