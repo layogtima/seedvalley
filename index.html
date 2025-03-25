@@ -7,6 +7,7 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/5b83e322a9.js" crossorigin="anonymous"></script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -643,7 +644,7 @@
                     <span
                       v-for="season in seed.seasons"
                       :key="season"
-                      class="w-6 h-6 flex items-center justify-center bg-black/70 dark:bg-white/70 text-white dark:text-black rounded-full text-xs"
+                      class="w-6 h-6 flex items-center justify-center bg-black/70 text-white rounded-full text-xs"
                       :title="getSeasonName(season)"
                       v-html="getSeasonIconSmall(season)"
                     ></span>
@@ -757,7 +758,7 @@
       <!-- Calendar Section -->
       <section
         id="calendar"
-        class="py-24 px-8 bg-gray-100 dark:bg-gray-800 hidden transition-colors hiddenduration-300"
+        class="py-24 px-8 bg-gray-100 dark:bg-gray-800 transition-colors hiddenduration-300"
       >
         <div class="max-w-6xl mx-auto">
           <h2 class="text-5xl font-bold mb-6">{{ t('calendar.title') }}</h2>
@@ -1158,12 +1159,12 @@
                 />
                 <!-- Seasonal Badges -->
                 <div
-                  class="absolute bottom-0 left-0 right-0 p-2 flex justify-center gap-2 bg-black/60 dark:bg-white/60"
+                  class="absolute top-0 right-0 right-0 p-2 flex gap-2"
                 >
                   <span
                     v-for="season in selectedSeed.seasons"
                     :key="season"
-                    class="w-8 h-8 flex items-center justify-center bg-white dark:bg-black text-black dark:text-white rounded-full"
+                    class="w-8 h-8 flex items-center justify-center bg-black text-white rounded-full"
                     :title="getSeasonName(season)"
                     v-html="getSeasonIconSmall(season)"
                   ></span>

@@ -589,7 +589,7 @@ const seedbank = {
             seasons: ["monsoon", "postmonsoon"],
             description:
                 "The curry leaf plant is a small tree native to India with aromatic leaves essential for South Indian cuisine. It takes time to establish but will provide leaves for many years once mature.",
-            imagePath: "https://m.media-amazon.com/images/I/813HsNoY0cL._AC_UF1000,1000_QL80_.jpg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Start with a young plant from a nursery for best results",
                 "Choose a large pot (minimum 12 inches) or plant in ground",
@@ -658,7 +658,7 @@ const seedbank = {
             seasons: ["summer", "monsoon"],
             description:
                 "Lemongrass is a tropical herb with a citrus flavor used in teas, soups, and curries. It's easy to grow and repels mosquitoes, making it a useful addition to any garden.",
-            imagePath: "https://www.almanac.com/sites/default/files/styles/or/public/image_nodes/lemongrass-growing.jpg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpgg",
             plantingSteps: [
                 "Start with a small plant or divide an existing clump",
                 "Plant in well-draining soil with added compost",
@@ -727,7 +727,7 @@ const seedbank = {
             seasons: ["winter", "postmonsoon"],
             description:
                 "Ajwain (carom) is an herb with thyme-like flavor, commonly used in Indian cuisine for its digestive properties. The plant produces seeds that are used as a spice and have medicinal value.",
-            imagePath: "https://homegrowntips.com/wp-content/uploads/2020/07/ajwain_seeds.jpg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Sow seeds directly in prepared soil 1/4 inch deep",
                 "Space seeds 6 inches apart in rows 12 inches apart",
@@ -796,7 +796,7 @@ const seedbank = {
             seasons: ["monsoon"],
             description:
                 "Turmeric is a rhizomatous herbaceous perennial plant with vibrant yellow roots used as a spice and for medicinal purposes. It requires a warm, humid climate and plenty of rainfall.",
-            imagePath: "https://1.bp.blogspot.com/-OHD9-_WHMRY/XVB01NQQYpI/AAAAAAAAb8s/dEwNSS8J-EEGGVUGpLAzFdvf42zTITvYQCLcBGAs/s1600/How%2Bto%2Bgrow%2Bturmeric%2Bat%2Bhome.jpg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Start with fresh rhizomes with visible growth buds",
                 "Cut rhizomes into 2-inch pieces, each with 2-3 buds",
@@ -865,7 +865,7 @@ const seedbank = {
             seasons: ["monsoon"],
             description:
                 "Ginger is a flowering plant whose rhizome is widely used as a spice and in traditional medicine. It thrives in partial shade, making it ideal for Bengaluru's home gardens.",
-            imagePath: "https://balconygardenweb.b-cdn.net/wp-content/uploads/2019/09/Growing-Ginger-in-Container.jpg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Select fresh rhizomes with growth buds or 'eyes'",
                 "Cut into pieces with 2-3 growth buds each",
@@ -934,7 +934,7 @@ const seedbank = {
             seasons: ["summer", "monsoon"],
             description:
                 "Chillies are spicy peppers that add heat to dishes. They're relatively easy to grow in containers and produce abundantly in Bengaluru's climate with regular watering and sun.",
-            imagePath: "https://veggiegardener.com/wp-content/uploads/2017/09/hot-pepper-growing-guide.jpg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Start seeds in seed trays or small pots",
                 "Plant seeds 1/4 inch deep in sterile seed starting mix",
@@ -1003,7 +1003,7 @@ const seedbank = {
             seasons: ["summer", "monsoon", "postmonsoon"],
             description:
                 "Sweet basil is an aromatic herb popular in Italian cuisine with a distinct sweet aroma. It grows quickly and is perfect for containers on sunny windowsills or balconies.",
-            imagePath: "https://greenhouseemporium.com/wp-content/uploads/2020/05/AdobeStock_190038652-2048x1367.jpeg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Sow seeds in well-draining soil 1/4 inch deep",
                 "Keep soil consistently moist until germination",
