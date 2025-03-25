@@ -658,7 +658,7 @@ const seedbank = {
             seasons: ["summer", "monsoon"],
             description:
                 "Lemongrass is a tropical herb with a citrus flavor used in teas, soups, and curries. It's easy to grow and repels mosquitoes, making it a useful addition to any garden.",
-            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpgg",
+            imagePath: "https://assets-news.housing.com/news/wp-content/uploads/2022/11/25141416/GERMINATION-FEATURE-compressed.jpg",
             plantingSteps: [
                 "Start with a small plant or divide an existing clump",
                 "Plant in well-draining soil with added compost",
