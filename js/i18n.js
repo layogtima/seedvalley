@@ -172,7 +172,9 @@ const translations = {
             menu: "Menu",
             close: "Close",
             back: "Back",
-            language: "Language"
+            language: "Language",
+            next: 'Next',
+            skip: 'Skip'
         }
     },
 
